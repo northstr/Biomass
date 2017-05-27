@@ -1,0 +1,67 @@
+---
+title: "Data_analysis"
+author: "JA"
+date: "May 26, 2017"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## R Markdown
+
+This is an R Markdown document. Markdown is a simple formatting syntax for authoring HTML, PDF, and MS Word documents. For more details on using R Markdown see <http://rmarkdown.rstudio.com>.
+
+When you click the **Knit** button a document will be generated that includes both content as well as the output of any embedded R code chunks within the document. You can embed an R code chunk like this:
+
+```{r}
+
+#Reading the csv file (comma seperated)
+Data = read.table("Biomass_Data_R.csv",header = TRUE, sep = "," )
+
+# Obtaining wet and dry biomass after subtrating the bags / tray and tie weight
+Data$Wet.weight = Data$Wet.Biomass.g. - Data$Weight.to.subtract..bag.and..tie.
+Data$Dry.weight = Data$Dry.biomass..g. - Data$Weight.to.subtract..tray.and.dry.tie.
+
+# Extracting required columns. (This added .Data at the begining of each col name)
+#Data.Final = data.frame(Data$Genotypes, Data$Block, Data$Row, Data$Plant.no, Data$Anthesis.before.harvest., Data$Wet.weight, Data$Dry.weight)
+
+
+Data.Final = data.frame(Data$Genotypes, Data$Block, Data$Row, Data$Plant.no, Data$Anthesis.before.harvest., Data$Wet.weight)
+
+
+# Fixing the col names
+# sub(pattern = "Data.",replacement= "",x = colnames(Data.Final), fixed = TRUE)
+
+
+#names(Data.Final) <- c("Genotypes", "Block", "Row", "Plant.no", "Anthesis", "Wet", "Dry")
+
+names(Data.Final) <- c("Genotypes", "Block", "Row", "Plant.no", "Anthesis", "Wet")
+
+# Subsetting Data for Block I, melting and plotting:
+
+## Subset
+Block.I = subset(Data.Final, Block == "I")
+
+
+d = subset(Block.I, Genotypes == "AgCS")
+mean(d$Wet)
+
+## Plot w/o melting
+
+library(ggplot2)
+
+ggplot(Block.I, aes(x= Genotypes, y = Wet)) + 
+  geom_point()+
+  facet_grid(. ~ Row)
+
+
+## Melt
+#library(reshape2)
+#Block.I.melt <- melt(Block.I, id.vars = "Genotypes")
+
+
+
+```
+
